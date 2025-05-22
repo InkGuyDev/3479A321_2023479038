@@ -222,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
           );*/
         },
 
-        child: Icon(Icons.skip_next, size: 200),
+        child: Icon(Icons.skip_next, size: 90),
       ),
     ];
   }

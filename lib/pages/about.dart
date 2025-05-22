@@ -80,7 +80,7 @@ class About extends StatelessWidget {
             },
             child: Icon(
               Icons.keyboard_return,
-              size: 200,
+              size: 90,
               color: const Color.fromARGB(255, 255, 0, 0),
             ),
           ),

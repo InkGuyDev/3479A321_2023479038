@@ -28,13 +28,13 @@ class ListContent extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const About()),
               );
             },
-            child: Icon(Icons.skip_next, size: 200),
+            child: Icon(Icons.skip_next, size: 90),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.keyboard_return, size: 200),
+            child: Icon(Icons.keyboard_return, size: 90),
           ),
         ],
       ),
