@@ -30,7 +30,19 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'LilitaOne',
       ),
-      home: const MyHomePage(title: 'Laboratorio aplicación'),
+      home: DefaultTabController(
+        length: 3,
+        initialIndex: 0,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text('Laboratorio Aplicación'),
+            bottom: context.watch<Appdata>().tabBar(),
+          ),
+          body: context.watch<Appdata>().tabBarView(),
+        ),
+      ),
+      //MyHomePage(title: 'Laboratorio aplicación'),
     );
   }
 }
@@ -42,7 +54,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() {
-    print("create state");
     return _MyHomePageState();
   }
 }
@@ -83,7 +94,7 @@ class _TestWidgetState extends State<TestWidget> {
   @override
   void didUpdateWidget(covariant TestWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('TestWidge didUpdateWidget, mounted: $mounted');
+    logger.d('TestWidge didUpdateWidget, mounted: $mounted');
   }
 }
 
@@ -126,24 +137,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    print('initState, mounted: $mounted');
+    logger.d('initState, mounted: $mounted');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('didChangeDependencies, mounted: $mounted');
+    logger.d('didChangeDependencies, mounted: $mounted');
   }
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
-    print('setState, mounted: $mounted');
+    logger.d('setState, mounted: $mounted');
   }
 
   @override
   Widget build(BuildContext context) {
-    print("build enter");
+    logger.d("build enter");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -230,24 +241,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void didUpdateWidget(covariant MyHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('didUpdateWidget, mounted: $mounted');
+    logger.d('didUpdateWidget, mounted: $mounted');
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    print('deactivate, mounted: $mounted');
+    logger.d('deactivate, mounted: $mounted');
   }
 
   @override
   void dispose() {
     super.dispose();
-    print('dispose, mounted: $mounted');
+    logger.d('dispose, mounted: $mounted');
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    print('reassemble, mounted: $mounted');
+    logger.d('reassemble, mounted: $mounted');
   }
 }
