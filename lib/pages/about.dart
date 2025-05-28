@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:application_laboratorio/Provider/app_data.dart';
+import 'package:application_laboratorio/pages/preferences.dart';
 import 'package:provider/provider.dart';
 
 class About extends StatelessWidget {
@@ -26,27 +27,7 @@ class About extends StatelessWidget {
                     fontSize: 50,
                   ),
                 ),
-                Row(
-                  children: [
-                    Consumer<Appdata>(
-                      builder: (context, model, child) {
-                        return Switch(
-                          value: model.resetAvaliable,
-                          onChanged: (value) {
-                            model.toggleResetWidget();
-                          },
-                        );
-                      },
-                    ),
-                    Text(
-                      'Botón de reset en pantalla Home',
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 102, 0, 0),
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -76,10 +57,13 @@ class About extends StatelessWidget {
         persistentFooterButtons: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Preferences()),
+              );
             },
             child: Icon(
-              Icons.keyboard_return,
+              Icons.save,
               size: 90,
               color: const Color.fromARGB(255, 255, 0, 0),
             ),

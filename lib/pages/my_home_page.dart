@@ -1,10 +1,13 @@
+import 'package:application_laboratorio/pages/activity_content.dart';
 import 'package:application_laboratorio/pages/list_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:application_laboratorio/pages/about.dart';
+import 'package:application_laboratorio/pages/preferences.dart';
 import 'package:application_laboratorio/Provider/app_data.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Logger logger = Logger();
 
@@ -94,12 +97,13 @@ class _TestWidgetState extends State<TestWidget> {
   @override
   void didUpdateWidget(covariant TestWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    logger.d('TestWidge didUpdateWidget, mounted: $mounted');
+    //logger.d('TestWidge didUpdateWidget, mounted: $mounted');
   }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   //int _counter = 0;
+  bool _isResetAvailible = false;
 
   /*void _incrementCounter() {
     //logger.d("incrementó");
@@ -126,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }*/
 
   void isResetAvailible() {
-    if (context.read<Appdata>().resetAvaliable) {
+    if (_isResetAvailible) {
       context.read<Appdata>().resetCounter();
     } else {
       logger.d("no hizo nada");
@@ -134,27 +138,40 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void setNewBool() {
+    context.read<Appdata>().setResetWidget(_isResetAvailible);
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isResetAvailible = prefs.getBool('isResetAvailible') ?? false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    logger.d('initState, mounted: $mounted');
+    _loadPreferences();
+    //logger.d('initState, mounted: $mounted');
+    logger.d('$_isResetAvailible');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    logger.d('didChangeDependencies, mounted: $mounted');
+    //logger.d('didChangeDependencies, mounted: $mounted');
   }
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
-    logger.d('setState, mounted: $mounted');
+    //logger.d('setState, mounted: $mounted');
   }
 
   @override
   Widget build(BuildContext context) {
-    logger.d("build enter");
+    // logger.d("build enter");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -193,7 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: footerButtons(),
               ),
               Expanded(
-                child: TestWidget(title: '${context.watch<Appdata>().counter}'),
+                child: TestWidget(
+                  title: 'EL BOTON DE RESET ESTA EN MODO: \n$_isResetAvailible',
+                ),
               ),
             ],
           ),
@@ -226,14 +245,28 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ListContent()),
-          );
+            MaterialPageRoute(builder: (context) => Preferences()),
+          ).then((_) {
+            _loadPreferences();
+            logger.d('ok ahora es $_isResetAvailible');
+          });
+
           /*Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const ListContent()),
           );*/
         },
 
-        child: Icon(Icons.skip_next, size: 90),
+        child: Icon(Icons.save, size: 90),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ActivityContent()),
+          );
+        },
+
+        child: Icon(Icons.dataset, size: 90),
       ),
     ];
   }
@@ -241,24 +274,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void didUpdateWidget(covariant MyHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    logger.d('didUpdateWidget, mounted: $mounted');
+    // logger.d('didUpdateWidget, mounted: $mounted');
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    logger.d('deactivate, mounted: $mounted');
+    //logger.d('deactivate, mounted: $mounted');
   }
 
   @override
   void dispose() {
     super.dispose();
-    logger.d('dispose, mounted: $mounted');
+    // logger.d('dispose, mounted: $mounted');
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    logger.d('reassemble, mounted: $mounted');
+    // logger.d('reassemble, mounted: $mounted');
   }
 }

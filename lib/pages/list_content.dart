@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:application_laboratorio/pages/about.dart';
+import 'package:application_laboratorio/pages/preferences.dart';
 
 final List<String> elementos = ['Hola', 'Mundo', 'Texto de Ejemplo'];
 
@@ -25,17 +25,17 @@ class ListContent extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const About()),
+                MaterialPageRoute(builder: (context) => const Preferences()),
               );
             },
-            child: Icon(Icons.skip_next, size: 90),
+            child: Icon(Icons.save, size: 90),
           ),
-          TextButton(
+          /*TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
             child: Icon(Icons.keyboard_return, size: 90),
-          ),
+          ),*/
         ],
       ),
     );

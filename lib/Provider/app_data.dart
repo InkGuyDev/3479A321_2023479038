@@ -52,6 +52,11 @@ class Appdata extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setResetWidget(bool newBool) {
+    _resetAvaliable = newBool;
+    notifyListeners();
+  }
+
   void setUserName(String newname) {
     _username = newname;
     notifyListeners();
