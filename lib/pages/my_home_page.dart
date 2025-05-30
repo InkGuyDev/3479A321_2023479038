@@ -2,6 +2,7 @@ import 'package:application_laboratorio/pages/activity_content.dart';
 import 'package:application_laboratorio/pages/list_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:application_laboratorio/pages/about.dart';
 import 'package:application_laboratorio/pages/preferences.dart';
@@ -104,6 +105,7 @@ class _TestWidgetState extends State<TestWidget> {
 class _MyHomePageState extends State<MyHomePage> {
   //int _counter = 0;
   bool _isResetAvailible = false;
+  int _imageIndex = 0;
 
   /*void _incrementCounter() {
     //logger.d("incrementó");
@@ -128,6 +130,33 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter = 0;
     });
   }*/
+
+  String _imageUrl = 'https://picsum.photos/250?image=0';
+
+  void setImageToSearch() async {
+    _imageIndex = context.read<Appdata>().counter;
+
+    final newImageUrl = 'https://picsum.photos/250?image=$_imageIndex';
+
+    try {
+      final response = await http.head(Uri.parse(newImageUrl));
+      if (response.statusCode == 200 || response.statusCode == 404) {
+        setState(() {
+          _imageUrl = newImageUrl;
+        });
+      } else {
+        setState(() {
+          _imageUrl = ''; // Clear the image URL
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _imageUrl = ''; // Clear the image URL
+      });
+    }
+
+    setState(() {});
+  }
 
   void isResetAvailible() {
     if (_isResetAvailible) {
@@ -198,7 +227,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }
                 },
-                child: svg,
+                child: Image.network(
+                  _imageUrl.isNotEmpty ? _imageUrl : '',
+                  width: 250,
+                  height: 250,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Text(
+                        'No se pudo cargar la imagen',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  },
+                ),
               ),
               const Text('Haz presionado el botón esta cantidad de veces:'),
               Text(
@@ -236,6 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: isResetAvailible, //context.read<Appdata>().resetCounter,
         child: Icon(Icons.exposure_zero),
       ),
+      TextButton(onPressed: setImageToSearch, child: Icon(Icons.image_search)),
     ];
   }
 
