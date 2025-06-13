@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:application_laboratorio/pages/activity_content.dart';
-import 'package:application_laboratorio/pages/list_content.dart';
+import 'package:application_laboratorio/pages/picture_screen.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'package:application_laboratorio/pages/about.dart';
 import 'package:application_laboratorio/pages/preferences.dart';
 import 'package:application_laboratorio/Provider/app_data.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'LilitaOne',
       ),
       home: DefaultTabController(
-        length: 3,
+        length: 2,
         initialIndex: 0,
         child: Scaffold(
           appBar: AppBar(
@@ -106,6 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
   //int _counter = 0;
   bool _isResetAvailible = false;
   int _imageIndex = 0;
+  late CameraDescription firstCamera;
+  late List<CameraDescription> cameras;
+  String? _imagePath;
+  //final List<String?> _imagePaths = [];
 
   /*void _incrementCounter() {
     //logger.d("incrementó");
@@ -130,6 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter = 0;
     });
   }*/
+  Future<void> _loadCameras() async {
+    cameras = await availableCameras();
+    setState(() {
+      firstCamera = cameras.first;
+    });
+  }
 
   String _imageUrl = 'https://picsum.photos/250?image=0';
 
@@ -182,6 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _loadPreferences();
+    _loadCameras();
     //logger.d('initState, mounted: $mounted');
     logger.d('$_isResetAvailible');
   }
@@ -213,34 +226,30 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               TextButton(
                 onPressed: () {
-                  if (context.read<Appdata>().counter.isEven) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ListContent(),
-                      ),
-                    );
-                  } else if (context.read<Appdata>().counter.isOdd) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const About()),
-                    );
-                  }
+                  null;
                 },
-                child: Image.network(
-                  _imageUrl.isNotEmpty ? _imageUrl : '',
-                  width: 250,
-                  height: 250,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Text(
-                        'No se pudo cargar la imagen',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    );
-                  },
-                ),
+                child:
+                    _imagePath != null
+                        ? Image.file(
+                          File(_imagePath!),
+                          width: 250,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        )
+                        : Image.network(
+                          _imageUrl.isNotEmpty ? _imageUrl : '',
+                          width: 250,
+                          height: 250,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Text(
+                                'No se pudo cargar la imagen',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          },
+                        ),
               ),
               const Text('Haz presionado el botón esta cantidad de veces:'),
               Text(
@@ -250,11 +259,6 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: footerButtons(),
-              ),
-              Expanded(
-                child: TestWidget(
-                  title: 'EL BOTON DE RESET ESTA EN MODO: \n$_isResetAvailible',
-                ),
               ),
             ],
           ),
@@ -282,6 +286,22 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
   }
 
+  void _openCamera(BuildContext context) async {
+    final imagePath = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (context) => PictureScreen(camera: cameras.first),
+      ),
+    );
+
+    if (imagePath != null) {
+      setState(() {
+        _imagePath = imagePath;
+        //_imagePaths.add(_imagePath);
+        context.read<Appdata>().imagePaths.add(_imagePath);
+      });
+    }
+  }
+
   List<Widget> navegationButtons() {
     return <Widget>[
       TextButton(
@@ -299,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
           );*/
         },
 
-        child: Icon(Icons.save, size: 90),
+        child: Icon(Icons.save, size: 50),
       ),
       TextButton(
         onPressed: () {
@@ -309,7 +329,13 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
 
-        child: Icon(Icons.dataset, size: 90),
+        child: Icon(Icons.dataset, size: 50),
+      ),
+      TextButton(
+        onPressed: () {
+          _openCamera(context);
+        },
+        child: Icon(Icons.camera, size: 50),
       ),
     ];
   }
