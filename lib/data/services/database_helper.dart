@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:application_laboratorio/entity/activity.dart';
+import 'package:application_laboratorio/domain/entities/activity.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -54,9 +54,9 @@ class DatabaseHelper {
     await db.update(
       'Activity',
       act.toMap(),
-      
+
       where: 'id = ?',
-      
+
       whereArgs: [act.id],
     );
   }
@@ -64,13 +64,7 @@ class DatabaseHelper {
   Future<void> deleteActivity(int id) async {
     final db = await database;
 
-    await db.delete(
-      'Activity',
-      
-      where: 'id = ?',
-      
-      whereArgs: [id],
-    );
+    await db.delete('Activity', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Activity>> recoverActivities() async {

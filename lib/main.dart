@@ -1,6 +1,6 @@
 import 'package:application_laboratorio/pages/my_home_page.dart';
-import 'package:application_laboratorio/services/database_helper.dart';
-import 'package:application_laboratorio/Provider/app_data.dart';
+import 'package:application_laboratorio/data/services/database_helper.dart';
+import 'package:application_laboratorio/widgets/app_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/widgets.dart';

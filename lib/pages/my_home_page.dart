@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:application_laboratorio/theme/theme.dart';
+import 'package:application_laboratorio/theme/util.dart';
 import 'package:application_laboratorio/pages/activity_content.dart';
 import 'package:application_laboratorio/pages/picture_screen.dart';
 import 'package:camera/camera.dart';
@@ -8,9 +9,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:application_laboratorio/pages/preferences.dart';
-import 'package:application_laboratorio/Provider/app_data.dart';
+import 'package:application_laboratorio/widgets/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 Logger logger = Logger();
 
@@ -25,17 +27,40 @@ final Widget svg = SvgPicture.asset(
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<ThemeData> getTheme(
+    Brightness localBrightness,
+    MaterialTheme localTheme,
+  ) async {
+    //theme: brightness == Brightness.light ? theme.light() : theme.dark(),
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    if (connectivityResult.contains(ConnectivityResult.mobile)) {
+      if (localBrightness == Brightness.light) {
+        return localTheme.light();
+      } else if (localBrightness == Brightness.dark) {
+        return localTheme.dark();
+      }
+    }
+
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color.fromARGB(255, 0, 255, 98),
+      ),
+      fontFamily: 'LilitaOne',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    //logger.d("Logger is working!");
+    final brightness = View.of(context).platformDispatcher.platformBrightness;
+
+    TextTheme textTheme = createTextTheme(context, "Alice", "Black Ops One");
+
+    MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp(
       title: 'Primera aplicación de Flutter',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 0, 255, 98),
-        ),
-        fontFamily: 'LilitaOne',
-      ),
+      theme: brightness == Brightness.light ? theme.light() : theme.dark(),
       home: DefaultTabController(
         length: 2,
         initialIndex: 0,
